@@ -1,0 +1,4 @@
+@reboot /usr/bin/ruby /home/pi/git/efmlogger/scripts/power.rb
+@reboot /usr/bin/ruby /home/pi/git/efmlogger/scripts/gps_verification.rb
+@reboot /usr/bin/ruby /home/pi/git/efmlogger/scripts/daq_control.rb
+@reboot /usr/bin/ruby /home/pi/git/efmlogger/scripts/time_set.rb
