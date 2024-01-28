@@ -28,6 +28,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(13, GPIO.OUT)
 
 hv = 0
+hv_previous = 0
 
 if comp_sw==1:
   bme280_i2c.set_default_i2c_address(address_temp)
@@ -43,26 +44,37 @@ if comp_sw==1:
       humid = round(data_all.humidity,2)
       press = round(data_all.pressure,2)
       hv = hv_ref + (temp-temp_base)*const_temp
-      if hv>hv_limit:
+      if (hv>hv_limit) or (hv<0):
         hv = 0
     except:
+      temp = False
+      humid = False
+      press = False
       hv = 0
     ut = round(time.time())
     dt = datetime.datetime.fromtimestamp(ut).strftime("%Y-%m-%d %H:%M:%S")
     output_file = "{}/hk_{}.dat".format(output_dir,datetime.datetime.fromtimestamp(ut).strftime("%Y%m%d"))
-    with open(output_file, "a") as f:
-      f.write("{}, {}, {}, {}, {}, {}\n".format(ut,dt,hv,temp,humid,press))
     if (count==max_count-1) or (hv==0):
+      with open(output_file, "a") as f:
+        f.write("{}, {}, {}, {}, {}, {}\n".format(ut,dt,hv,temp,humid,press))
+        print("{}, {}, {}, {}, {}, {}".format(ut,dt,hv,temp,humid,press))
       hv_command = round((hv+dac_const[0])/dac_const[1])
-      command = [hex((hv_command&0xff0)>>4), hex((hv_command&0x00f) << 4)]
-      i2c.write_i2c_block_data(address_dac, 0x40, command)  
+      if hv_command<0:
+        hv_command = 0
+      command = [(hv_command&0xff0)>>4, (hv_command&0x00f)<<4]
+      i2c.write_i2c_block_data(address_dac, 0x40, command)
+      print("HV changed.")
       if hv>0:
         GPIO.output(13, 1)
       else:
         GPIO.output(13, 0)
       count = 0
+      hv_previous = hv
       time.sleep(interval_measure)
     else:
+      with open(output_file, "a") as f:
+        f.write("{}, {}, {}, {}, {}, {}\n".format(ut,dt,hv_previous,temp,humid,press))
+        print("{}, {}, {}, {}, {}, {}".format(ut,dt,hv_previous,temp,humid,press))
       count+=1
       time.sleep(interval_measure)
       
@@ -74,15 +86,19 @@ else:
     ut = round(time.time())
     dt = datetime.datetime.fromtimestamp(ut).strftime("%Y-%m-%d %H:%M:%S")
     hv = hv_ref
-    if hv>hv_limit:
+    if (hv>hv_limit) or (hv<0):
       hv = 0
     output_file = "{}/hk_{}.dat".format(output_dir,datetime.datetime.fromtimestamp(ut).strftime("%Y%m%d"))
     with open(output_file, "a") as f:
       f.write("{}, {}, {}\n".format(ut,dt,hv))
+      print("{}, {}, {}".format(ut,dt,hv))
     if (count==max_count-1) or (hv==0):
       hv_command = round((hv+dac_const[0])/dac_const[1])
-      command = [(hv_command&0xff0)>>4, (hv_command&0x00f) << 4]
+      if hv_command<0:
+        hv_command = 0
+      command = [(hv_command&0xff0)>>4, (hv_command&0x00f)<<4]
       i2c.write_i2c_block_data(address_dac, 0x40, command)
+      print("HV changed.")
       if hv>0:
         GPIO.output(13, 1)
       else:
@@ -90,6 +106,6 @@ else:
       count = 0
       time.sleep(interval_measure)
     else:
-      count+=1
+      count += 1
       time.sleep(interval_measure)
-    
+      
