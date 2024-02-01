@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from bme280 import bme280
-from bme280 import bme280_i2c
 import smbus
+import smbus2
+import bme280
 import datetime
 import sys
 import time
@@ -23,17 +23,18 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(13, GPIO.OUT)
 
 if comp_sw==1:
+  bme280.load_calibration_params(smbus2.SMBus(1),address_temp)
   try:
-    bme280_i2c.set_default_i2c_address(address_temp)
-    bme280_i2c.set_default_bus(1)
-    bme280.setup()
-    data_all = bme280.read_all()
+    hv = 0
+    data_all = bme280.sample(smbus2.SMBus(1),address_temp)
     temp = round(data_all.temperature,2)
     humid = round(data_all.humidity,2)
-    press = round(data_all.pressure,2)
-    hv = 0
+    press = round(data_all.pressure,2)    
   except:
     hv = 0
+    temp = -100
+    humid = -100
+    press = -100
   ut = round(time.time())
   dt = datetime.datetime.fromtimestamp(ut).strftime("%Y-%m-%d %H:%M:%S")
   output_file = "{}/hk_{}.dat".format(output_dir,datetime.datetime.fromtimestamp(ut).strftime("%Y%m%d"))

@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from bme280 import bme280
-from bme280 import bme280_i2c
 import datetime
 import smbus
+import smbus2
+import bme280
 import sys
 import time
 import RPi.GPIO as GPIO
@@ -31,15 +31,13 @@ hv = 0
 hv_previous = 0
 
 if comp_sw==1:
-  bme280_i2c.set_default_i2c_address(address_temp)
-  bme280_i2c.set_default_bus(1)
-  bme280.setup()
+  bme280.load_calibration_params(smbus2.SMBus(1),address_temp)
   max_count = round(interval/interval_measure)
   count = max_count-1
 
   while True:
     try:
-      data_all = bme280.read_all()
+      data_all = bme280.sample(smbus2.SMBus(1),address_temp)
       temp = round(data_all.temperature,2)
       humid = round(data_all.humidity,2)
       press = round(data_all.pressure,2)
