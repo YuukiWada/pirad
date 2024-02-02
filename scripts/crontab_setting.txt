@@ -1,0 +1,4 @@
+@reboot /usr/bin/python /home/pi/git/pirad/scripts/python/power.py
+@reboot /usr/bin/python /home/pi/git/pirad/scripts/python/daq_control.py
+@reboot /usr/bin/python /home/pi/git/pirad/scripts/python/gps_verification.py
+@reboot /usr/bin/ruby /home/pi/git/pirad/scripts/ruby/time_set.rb
