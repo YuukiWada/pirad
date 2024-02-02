@@ -14,5 +14,5 @@ The `circuit` directory contains Gerber files and parts lists necessary to manuf
 ### Data Acquisition Software
 Data acquisition software is stored in the `scripts` directory. These are composed of C, Python, and Ruby languages. The software has been tested on Raspberry Pi4 Model B with Raspberry Pi OS with Desktop 32-bit Brookworm. 64-bit OS is not supported.
 
-## Developper Information
+## Developer Information
 Yuuki Wada (Assistant Professor, Department of Electrical, Electronic, and Infocommunications Engineering, Graduate School of Engineering, Osaka University)
