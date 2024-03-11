@@ -97,7 +97,9 @@ while True:
                     time_now = time.strftime("%Y%m%d")
 
                     if not GPIO.input(switch):
-                        subprocess.run(["pkill", "-f", "run_daq"])
+                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
+                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
+                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
                         subprocess.run(["pkill", "-f", "control_hv"])
                         subprocess.run(["sudo", "python", "/home/pi/git/pirad/scripts/python/stop_hv.py", input_dir, str(compensation)])
                         time.sleep(2.0)
@@ -119,7 +121,9 @@ while True:
                         break
                     elif time_now != current_time:
                         print("File changed")
-                        subprocess.run(["pkill", "-f", "run_daq"])
+                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
+                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
+                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
                         current_time = time_now
                         break
                     current_time = time_now
