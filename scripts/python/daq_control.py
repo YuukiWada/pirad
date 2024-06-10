@@ -68,7 +68,7 @@ GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(led, GPIO.OUT)
 
 while True:
-    current_time = time.strftime("%Y%m%d")
+    current_time = time.strftime("%Y%m%d-%H")
     
     if GPIO.input(switch):
         usb_res = check_usb(input_dir, device_path, led, switch)
@@ -94,16 +94,26 @@ while True:
                 subprocess.run("sudo script -a -q -c '/home/pi/git/pirad/scripts/c_lang/run_daq {}' /dev/null | sudo tee -a {} >> /dev/null &".format(str(threshold), output_file), shell=True)
                 
                 while True:
-                    time_now = time.strftime("%Y%m%d")
+                    #time_now = time.strftime("%Y%m%d")
+                    time_now = time.strftime("%Y%m%d-%H")
 
                     if not GPIO.input(switch):
-                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
-                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
-                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
-                        subprocess.run(["pkill", "-f", "control_hv"])
+                        pid = subprocess.run("sudo pgrep -f run_daq", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        pid = subprocess.run("sudo pgrep -f control_hv", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        pid = subprocess.run("sudo pgrep -f reset_led", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
                         subprocess.run(["sudo", "python", "/home/pi/git/pirad/scripts/python/stop_hv.py", input_dir, str(compensation)])
+                        #subprocess.run(["pkill", "-f", "run_daq"])
+                        #subprocess.run(["pkill", "-9", "-f", "run_daq"])
+                        #subprocess.run(["pkill", "-9", "-f", "run_daq"])
+                        #subprocess.run(["pkill", "-9", "-f", "control_hv"])
                         time.sleep(2.0)
-                        subprocess.run(["pkill", "-f", "reset_led"])
+                        #subprocess.run(["pkill", "-9", "-f", "reset_led"])
                         GPIO.output(led,0)
                         print("Observation stops")
                         time.sleep(5.0)
@@ -121,9 +131,17 @@ while True:
                         break
                     elif time_now != current_time:
                         print("File changed")
-                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
-                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
-                        subprocess.run(["pkill", "-9", "-f", "run_daq"])
+                        pid = subprocess.run("sudo pgrep -f run_daq", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        pid = subprocess.run("sudo pgrep -f control_hv", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        pid = subprocess.run("sudo pgrep -f reset_led", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        #subprocess.run(["pkill", "-9", "-f", "control_hv"])
+                        #subprocess.run(["pkill", "-9", "-f", "reset_led"])
                         current_time = time_now
                         break
                     current_time = time_now

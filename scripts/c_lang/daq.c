@@ -2,7 +2,14 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <sys/time.h>
+
+void signal_handler(int signum)
+{
+  gpioTerminate();
+  exit(1);
+}
 
 int main(int argc, char *argv[]){
   
@@ -16,6 +23,9 @@ int main(int argc, char *argv[]){
   char conf[data_length];
   char adc[data_length];
 
+  signal(SIGINT, signal_handler);
+  //signal(SIGTERM, signal_handler);
+  
   gpioInitialise();
   gpioSetMode(pin_reset, PI_OUTPUT);
   gpioSetMode(pin_led, PI_OUTPUT);
