@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
   int pin_reset = 5;
   int pin_led = 6;
   int spi_device = 0;
-  int baud = 7800000;
+  int baud = 500000;
   int spi_flag = 0;
   const int data_length = 3;
   char conf[data_length];
