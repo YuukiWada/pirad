@@ -62,13 +62,16 @@ def blink(led, num):
 switch = 20
 led = 17
 
+time.sleep(30)
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(led, GPIO.OUT)
 
 while True:
-    current_time = time.strftime("%Y%m%d-%H")
+    current_time = time.strftime("%Y%m%d")
+    #current_time = time.strftime("%Y%m%d-%H")
     
     if GPIO.input(switch):
         usb_res = check_usb(input_dir, device_path, led, switch)

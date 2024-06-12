@@ -9,6 +9,8 @@ import bme280
 i2c = smbus.SMBus(1)
 address_dac = 0x60
 
+time.sleep(30)
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
