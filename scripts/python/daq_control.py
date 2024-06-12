@@ -94,8 +94,8 @@ while True:
                 subprocess.run("sudo script -a -q -c '/home/pi/git/pirad/scripts/c_lang/run_daq {}' /dev/null | sudo tee -a {} >> /dev/null &".format(str(threshold), output_file), shell=True)
                 
                 while True:
-                    #time_now = time.strftime("%Y%m%d")
-                    time_now = time.strftime("%Y%m%d-%H")
+                    time_now = time.strftime("%Y%m%d")
+                    #time_now = time.strftime("%Y%m%d-%H")
 
                     if not GPIO.input(switch):
                         pid = subprocess.run("sudo pgrep -f run_daq", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
