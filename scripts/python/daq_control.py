@@ -62,7 +62,7 @@ def blink(led, num):
 switch = 20
 led = 17
 
-time.sleep(30)
+time.sleep(15)
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
@@ -90,6 +90,8 @@ while True:
                 
                 subprocess.Popen(["sudo", "python", "/home/pi/git/pirad/scripts/python/reset_led.py", "&"])
                 subprocess.Popen(["sudo", "python", "/home/pi/git/pirad/scripts/python/control_hv.py", input_dir, str(hv), str(compensation), str(const_temp), str(hv_limit), "&"])
+                subprocess.Popen(["sudo", "python", "/home/pi/git/pirad/scripts/python/compress.py", input_dir, "&"])
+                subprocess.Popen("sudo python /home/pi/git/pirad/scripts/python/gps_logger.py {} &".format(input_dir), shell=True)
                 time.sleep(2.0)
                 GPIO.output(led,1)
                 
@@ -108,6 +110,12 @@ while True:
                         pid_command = pid.strip().split("\n")[0]
                         subprocess.run(["sudo", "kill", "-2", pid_command])
                         pid = subprocess.run("sudo pgrep -f reset_led", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        pid = subprocess.run("sudo pgrep -f gps_logger", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        pid = subprocess.run("sudo pgrep -f compress.py", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
                         pid_command = pid.strip().split("\n")[0]
                         subprocess.run(["sudo", "kill", "-2", pid_command])
                         subprocess.run(["sudo", "python", "/home/pi/git/pirad/scripts/python/stop_hv.py", input_dir, str(compensation)])
@@ -141,6 +149,12 @@ while True:
                         pid_command = pid.strip().split("\n")[0]
                         subprocess.run(["sudo", "kill", "-2", pid_command])
                         pid = subprocess.run("sudo pgrep -f reset_led", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        pid = subprocess.run("sudo pgrep -f gps_logger", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
+                        pid_command = pid.strip().split("\n")[0]
+                        subprocess.run(["sudo", "kill", "-2", pid_command])
+                        pid = subprocess.run("sudo pgrep -f compress.py", shell=True, stdout=subprocess.PIPE , stderr=subprocess.PIPE ,encoding="utf-8").stdout
                         pid_command = pid.strip().split("\n")[0]
                         subprocess.run(["sudo", "kill", "-2", pid_command])
                         #subprocess.run(["pkill", "-9", "-f", "control_hv"])
